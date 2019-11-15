@@ -1,7 +1,7 @@
 const inquire = require('inquirer')
 const mysql = require('mysql2')
-const table = require('cli-table2')
-const app = require('Customer.js')
+const Table = require('../Bamazon/node_modules/cli-table2')
+const app = require('../Bamazon/Customer.js')
 
 // creates connection to MySql
 const connection = mysql.createConnection({
@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
 connection.connect()
 
     let display = function() {
-        connection.query('SELECT * FROM products',(err,res)=>{
+        connection.query('SELECT * FROM `products`',(err,res)=>{
             if(err) throw err;
 
             console.log('--------------------')
@@ -24,8 +24,8 @@ connection.connect()
             console.log('Find your equipment below')
             console.log('-------')
 
-            let table = new Table ({
-                head: ['Product Id', 'Product Description', 'Cost'],
+            let table =  new Table({
+                head: ['Product Department', 'Product Description', 'Cost'],
                 colWidth: [12,50,8],
                 colAligns:['center','left', 'right'],
                 style: {
@@ -34,7 +34,7 @@ connection.connect()
                 }            
             })
             for(let i = 0; i < res.length; i++){
-                table.push([res[i].id,res[i].product_name, res[i].price])
+                table.push([res[i].department_id,res[i].product_name, res[i].price])
             }
             console.log(table.toString())
             console.log('')
