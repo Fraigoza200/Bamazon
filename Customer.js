@@ -24,7 +24,7 @@ connection.connect()
             console.log('Find your equipment below')
             console.log('-------')
 
-            let table = newTable ({
+            let table = new Table ({
                 head: ['Product Id', 'Product Description', 'Cost'],
                 colWidth: [12,50,8],
                 colAligns:['center','left', 'right'],
@@ -39,7 +39,7 @@ connection.connect()
             console.log(table.toString())
             console.log('')
         })
-        newTable()
+        // newTable()
     }
 
 let shopping = function() {
