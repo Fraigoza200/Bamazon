@@ -1,6 +1,7 @@
 const inquire = require('inquirer')
 const mysql = require('mysql2')
 const table = require('cli-table2')
+const app = require('Customer.js')
 
 // creates connection to MySql
 const connection = mysql.createConnection({
@@ -23,7 +24,7 @@ connection.connect()
             console.log('Find your equipment below')
             console.log('-------')
 
-            let table = new Table({
+            let table = newTable ({
                 head: ['Product Id', 'Product Description', 'Cost'],
                 colWidth: [12,50,8],
                 colAligns:['center','left', 'right'],
@@ -38,6 +39,7 @@ connection.connect()
             console.log(table.toString())
             console.log('')
         })
+        newTable()
     }
 
 let shopping = function() {
