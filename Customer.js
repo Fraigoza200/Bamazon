@@ -1,4 +1,4 @@
-const inquire = require('inquirer')
+const inquirer = require('inquirer')
 const mysql = require('mysql2')
 const Table = require('../Bamazon/node_modules/cli-table2')
 const app = require('../Bamazon/Customer.js')
@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
 connection.connect()
 
     let display = function() {
-        connection.query('SELECT * FROM `products`',(err,res)=>{
+        connection.query("SELECT * FROM `products`",function (err,res){
             if(err) throw err;
 
             console.log('--------------------')
@@ -25,7 +25,7 @@ connection.connect()
             console.log('-------')
 
             let table =  new Table({
-                head: ['Product Department', 'Product Description', 'Cost'],
+                head: ['Product ID', 'Product Description', 'Cost'],
                 colWidth: [12,50,8],
                 colAligns:['center','left', 'right'],
                 style: {
@@ -34,62 +34,61 @@ connection.connect()
                 }            
             })
             for(let i = 0; i < res.length; i++){
-                table.push([res[i].department_id,res[i].product_name, res[i].price])
+                table.push([res[i].item_id,res[i].product_name, res[i].price])
             }
             console.log(table.toString())
             console.log('')
+            shopping()
         })
         // newTable()
     }
 
 let shopping = function() {
-    inquire.prompt({
+    inquirer.prompt({
         name: 'productsToBuy',
         type: 'input',
         message: 'Enter the Product ID of the item you would like to buy'
     }).then(function(answer1){
-
-        let selection = answer.productToBuy
-        connection.query('SELECT * FROM products WHERE =?',selection,function(err,res){
-            if(err) throw err
-            if(res.length ===0){
-                console.log('Sorry, that item is not availabe. Please choose one of the following items that is displayed on the screen')
+        let selection = answer1.productsToBuy;
+        connection.query("SELECT * FROM products WHERE item_id = ?", selection, function(err,res){
+            if(err) throw err;
+            if(res.length === 0) {
+                console.log('That product no longer exists. Please choose from the following products in the diagram above')
 
                 shopping()
             }else {
-                console.log('We are all good to go')
                 inquirer.prompt({
                     name: 'quantity',
                     type: 'input',
-                    message: 'How many products would you like to buy?'
-                })
-                .then(function(answer2){
-                    let quantity = answer2.quantity
+                    message: 'How many Items would you like to buy?'
+                }).then(function(answer2){
+                    let quantity = answer2.quantity;
                     if(quantity > res[0].stock_quantity){
-                        console.log('Sorry, we only have ' + res[0].stock_quantity + 'of the desired product')
+                        console.log('Sorry, we only have ' + res[0].stock_quantity + 'items in stock')
 
                         shopping()
                     }else {
-                        console.log(res[0].products_name + 'purchased')
-                        console.log(quantity + 'qty at $' + res[0].price)
+                        console.log('')
+                        console.log(res[0].product_name  +  'purchased')
+                        console.log( quantity  + 'unit at $' +  res[0].price)
+                        console.log(res[0].stock_quantity)
 
-                        let newQuantity = res[0].stock_quantity - quantity 
+                        const newQuantity = (res[0].stock_quantity - quantity);
 
-                        connection.query('UPDATE products Set stock_quantity' + newQuantity + 'WHERE id = ' + res[0].id, function(err,resUpdate) {
-                            if(err) throw err
-                            console.log('')
-                            console.log('Your Order is being Processed and will be sent to you')
-                            console.log('Thank You for shopping with us. Please come again')
+                        connection.query("UPDATE products SET stock_quantity = " + newQuantity + "WHERE id =" + res[0].item_id, function(err, resUpdate) {
+                            if(err) throw err;
+                            console.log("Thank You for shopping with us!")
+                            console.log("Your order is being processed and will be sent out to you")
                             connection.end()
                         })
                     }
+                }).catch(e =>{
+                    if(e){console.log(e)}
                 })
             }
         })
 
     })
+
 }
-
 display();
-
-
