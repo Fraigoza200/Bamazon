@@ -3,7 +3,7 @@
 Bamazon is terminal based App. It allows Users to choose from a variety of Baseball Items in order to fulfill a User's needs. 
 
 # Technologies Used:
-JavaScript, Inquirer, MySql, and Cli-Table2. 
+JavaScript, Inquirer, Node, MySql, and Cli-Table2. 
 
 
 ![](images/Bamazon%20Home%20Page.png)
